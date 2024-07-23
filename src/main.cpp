@@ -5,6 +5,7 @@
 #include <qvariant.h>
 #include <qtimer.h>
 #include <QMetaEnum>
+#include <QLoggingCategory>
 
 using namespace Qt::Literals::StringLiterals;
 
@@ -60,7 +61,8 @@ int main(int argc, char *argv[])
                         { u"d"_s, u"Data bits. (8)"_s, u"data bits"_s, u"8"_s },
                         { u"p"_s, u"Parity. (N)"_s, u"parity"_s, u"N"_s },
                         { u"s"_s, u"Stop bits. (1)"_s, u"stop bits"_s, u"1"_s },
-                        { u"a"_s, u"Server address."_s, u"address"_s } });
+                        { u"a"_s, u"Server address."_s, u"address"_s },
+                        { u"verbose"_s, u"Verbose mode"_s, u"verbose"_s } });
 
     parser.process(app);
 
@@ -72,6 +74,10 @@ int main(int argc, char *argv[])
         cerr << u"Specify server address\n"_s << Qt::endl;
         parser.showHelp(1);
     }
+    if (parser.isSet(u"verbose"_s)) {
+       QLoggingCategory::setFilterRules(u"qt.modbus* = true"_s);
+    }
+
     auto positionalArguments{ parser.positionalArguments() };
     if (positionalArguments.isEmpty()) {
         cerr << u"Specify firmware file (bin)\n"_s << Qt::endl;
