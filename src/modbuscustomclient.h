@@ -11,7 +11,8 @@ class ModbusCustomClient : public QModbusRtuSerialClient
 public:
     explicit ModbusCustomClient(QObject *parent = nullptr);
 
-    enum class Subfunctions : quint8 { EraseFlash, ProgramFlash, GetChecksumFlash, ResetDevice };
+    enum class Subfunctions : quint8 { EraseFlash, ProgramFlash, GetChecksumFlash, ResetDevice //,GetChecksum16Flash,WriteCRC16 
+};
 
     struct Settings
     {

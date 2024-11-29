@@ -95,7 +95,18 @@ bool ModbusCustomClient::processPrivateResponse(const QModbusResponse &response,
         data->setValues(QList<quint16>{ static_cast<quint8>(dataArray.at(1)) });
         success = true;
         break;
-
+/*
+    case Subfunctions::GetChecksum16Flash:
+        Q_ASSERT(dataSize == 2);
+        data->setValues(QList<quint16>{ static_cast<quint8>(dataArray.at(1)) });
+        success = true;
+        break;
+    case Subfunctions::WriteCRC16:
+        Q_ASSERT(dataSize == 2);
+        data->setValues(QList<quint16>{ static_cast<quint8>(dataArray.at(1)) });
+        success = true;
+        break;
+*/
     case Subfunctions::ResetDevice:
         Q_ASSERT(dataSize == 2);
         data->setValues(QList<quint16>{ static_cast<quint8>(dataArray.at(1)) });

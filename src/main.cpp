@@ -52,9 +52,10 @@ int main(int argc, char *argv[])
     QTextStream cerr(stderr);
 
     QCommandLineParser parser;
-    parser.setApplicationDescription(u"Modbus loader"_s);
+    parser.setApplicationDescription(u"Modbus Cyntron loader"_s);
     parser.addHelpOption();
     parser.addPositionalArgument(u"firmware"_s, u"A bin file to load."_s);
+    parser.addPositionalArgument(u"bootloader"_s, u"A bootloader bin file to load."_s);
 
     parser.addOptions({ { u"n"_s, u"Port name."_s, u"port"_s },
                         { u"b"_s, u"Baud rate. (115200)"_s, u"baud rate"_s, u"115200"_s },
@@ -65,6 +66,45 @@ int main(int argc, char *argv[])
                         { u"verbose"_s, u"Verbose mode"_s, u"verbose"_s } });
 
     parser.process(app);
+
+    auto positionalArguments{ parser.positionalArguments() };
+     if (positionalArguments.size() == 2) {
+    QFile fileBootload;
+    QFile fileMainload;
+    QString errorStr;
+
+      auto bootloaderFile{ positionalArguments.at(1) };
+    fileBootload.setFileName(bootloaderFile);
+
+    if (!fileBootload.open(QIODeviceBase::ReadOnly)) {
+        errorStr = fileBootload.errorString();
+        //emit finished(false);
+        //return;
+        parser.showHelp(1);
+
+    }
+
+    char bootloaderTemp[262144]; //256K
+    char programTemp[262144]; //256K
+
+        QByteArray byteArray;
+        QDataStream dataStream{ &byteArray, QIODeviceBase::WriteOnly };
+
+        auto readCount{ fileBootload.read(bootloaderTemp, sizeof(bootloaderTemp)) };
+        if (readCount == -1) {
+            errorStr = fileBootload.errorString();
+            //emit finished(false);
+            //return;
+        parser.showHelp(1);
+
+        } else if (readCount == 0) {
+            //return;
+        parser.showHelp(1);
+
+        }
+	cout << u"Two files downloaded\n"_s << Qt::endl;
+
+    }
 
     if (!parser.isSet(u"n"_s)) {
         cerr << u"Specify port name\n"_s << Qt::endl;
@@ -78,7 +118,6 @@ int main(int argc, char *argv[])
        QLoggingCategory::setFilterRules(u"qt.modbus* = true"_s);
     }
 
-    auto positionalArguments{ parser.positionalArguments() };
     if (positionalArguments.isEmpty()) {
         cerr << u"Specify firmware file (bin)\n"_s << Qt::endl;
         parser.showHelp(1);

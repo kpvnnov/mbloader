@@ -31,11 +31,17 @@ private:
         VerifyFlash,
         ResetDevice,
         Finished,
+//        VerifyFlash16,
+        //WriteCRC,
+        //WriteSerial,
     };
 
     ModbusCustomClient *modbusClient{ nullptr };
     QFile fileFirmware;
     quint8 checksumFirmware{ 0 };
+//   quint8 crc_hi{ 0xFF }; /* high CRC byte initialized */
+//   quint8 crc_lo{ 0xFF }; /* low CRC byte initialized */
+
     QString errorStr;
     State state{ State::Idle };
 
